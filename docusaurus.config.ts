@@ -61,7 +61,7 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/main.jpeg',
+    image: 'img/space.jpg',
     navbar: {
       title: '우켱',
       logo: {
