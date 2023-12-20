@@ -71,13 +71,13 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'study',
           position: 'left',
           label: '공부',
         },
         { to: '/dev', label: '개발', position: 'left' },
         {
-          to: '/life',
+          to: '/me',
           label: '일상',
           position: 'left',
         },
@@ -105,7 +105,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Wookhyung, Inc. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
@@ -120,16 +120,16 @@ const config: Config = {
         /**
          * Required for any multi-instance plugin
          */
-        id: 'life',
+        id: 'me',
         /**
          * URL route for the blog section of your site.
          * *DO NOT* include a trailing slash.
          */
-        routeBasePath: 'life',
+        routeBasePath: 'me',
         /**
          * Path to data on filesystem relative to site dir.
          */
-        path: './life',
+        path: './me',
       },
     ],
   ],
