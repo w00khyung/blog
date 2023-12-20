@@ -10,34 +10,21 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: '개발',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
-    description: (
-      <>
-        Docusaurus was designed from the ground up to be easily installed and used to get your website up and running
-        quickly.
-      </>
-    ),
+    description: <>새롭게 알게 된 것을 확인하고, 기록하고, 적용하여 자신의 것으로 만드려고 노력합니다.</>,
   },
   {
-    title: 'Focus on What Matters',
+    title: '기록',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
-      <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go ahead and move your docs into the{' '}
-        <code>docs</code> directory.
-      </>
+      <>기록을 남겨둔 과거의 자신에게 고마워한 적이 있었나요? 저는 있었답니다. 미래의 자신을 위해 기록합니다.</>
     ),
   },
   {
-    title: 'Powered by React',
+    title: '에러 해결',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
-    description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can be extended while reusing the same
-        header and footer.
-      </>
-    ),
+    description: <>제 해결법이 여러분에게도 도움이 되길 바랍니다.</>,
   },
 ];
 
@@ -59,12 +46,11 @@ export default function HomepageFeatures(): JSX.Element {
   return (
     <section className={styles.features}>
       <div className='container'>
-        Hello, World!
-        {/* <div className="row">
+        <div className='row'>
           {FeatureList.map((props, idx) => (
             <Feature key={idx} {...props} />
           ))}
-        </div> */}
+        </div>
       </div>
     </section>
   );
