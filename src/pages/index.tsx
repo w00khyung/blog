@@ -18,7 +18,7 @@ function HomepageHeader() {
         <p className='hero__subtitle'>{siteConfig.tagline}</p>
         <div className={styles.buttons}>
           <Link className='button button--secondary button--lg' to='/dev'>
-            기록 보러 가기
+            살펴보기
           </Link>
         </div>
       </div>
