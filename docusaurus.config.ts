@@ -8,7 +8,7 @@ const config: Config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://ctdlog.github.io',
+  url: 'https://wookhyung.vercel.app',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -139,24 +139,6 @@ const config: Config = {
         path: './me',
         blogSidebarTitle: '최근 글',
         blogTitle: '일상',
-      },
-    ],
-    [
-      '@docusaurus/plugin-content-blog',
-      {
-        /**
-         * Required for any multi-instance plugin
-         */
-        id: 'book',
-        /**
-         * URL route for the blog section of your site.
-         * *DO NOT* include a trailing slash.
-         */
-        routeBasePath: 'book',
-        /**
-         * Path to data on filesystem relative to site dir.
-         */
-        path: './book',
       },
     ],
   ],
