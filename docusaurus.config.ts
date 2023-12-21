@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: '우켱의 블로그',
-  tagline: '개발, 독서, 일상 등 다양한 주제를 기록하는 블로그입니다.',
+  tagline: '개발, 서적, 일상 등 다양한 주제를 기록하는 블로그입니다.',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here

@@ -29,7 +29,7 @@ function HomepageHeader() {
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
-    <Layout title={`안녕, 세상!`} description='개발, 독서, 일상 등 다양한 주제를 기록하는 블로그입니다.'>
+    <Layout title={`안녕, 세상!`} description='개발, 서적, 일상 등 다양한 주제를 기록하는 블로그입니다.'>
       <HomepageHeader />
       <main>
         <HomepageFeatures />
