@@ -138,6 +138,7 @@ const config: Config = {
         routeBasePath: 'me',
         path: './me',
         blogSidebarTitle: '최근 글',
+        blogTitle: '일상',
       },
     ],
     [
