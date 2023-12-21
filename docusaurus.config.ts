@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: '우켱의 블로그',
-  tagline: '개발, 독서, 일상 등 다양한 주제로 글을 쓰는 블로그입니다.',
+  tagline: '개발, 독서, 일상 등 다양한 주제를 기록하는 블로그입니다.',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -70,22 +70,24 @@ const config: Config = {
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'study',
+          type: 'doc',
+          docId: 'study/introduction',
           position: 'left',
-          label: '공부',
+          label: '개발',
         },
-        { to: '/dev', label: '개발', position: 'left' },
+        {
+          type: 'docSidebar',
+          sidebarId: 'book',
+          position: 'left',
+          label: '독서',
+        },
+        // { to: '/dev', label: '개발', position: 'left' },
         {
           to: '/me',
           label: '일상',
           position: 'left',
         },
-        {
-          to: '/book',
-          label: '독서',
-          position: 'left',
-        },
+
         {
           href: 'https://github.com/facebook/docusaurus',
           label: 'GitHub',
@@ -122,19 +124,10 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-blog',
       {
-        /**
-         * Required for any multi-instance plugin
-         */
         id: 'me',
-        /**
-         * URL route for the blog section of your site.
-         * *DO NOT* include a trailing slash.
-         */
         routeBasePath: 'me',
-        /**
-         * Path to data on filesystem relative to site dir.
-         */
         path: './me',
+        blogSidebarTitle: '최근 글',
       },
     ],
     [
