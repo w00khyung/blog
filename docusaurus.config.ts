@@ -81,6 +81,12 @@ const config: Config = {
           position: 'left',
           label: '서적',
         },
+        {
+          type: 'docSidebar',
+          sidebarId: 'article',
+          position: 'left',
+          label: '아티클',
+        },
         // { to: '/dev', label: '개발', position: 'left' },
         {
           to: '/me',
