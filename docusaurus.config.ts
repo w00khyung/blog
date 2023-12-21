@@ -79,7 +79,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'book',
           position: 'left',
-          label: '독서',
+          label: '서적',
         },
         // { to: '/dev', label: '개발', position: 'left' },
         {

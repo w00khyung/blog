@@ -64,6 +64,7 @@ const sidebars: SidebarsConfig = {
       label: '모던 리액트 Deep Dive',
       link: {
         type: 'generated-index',
+        description: '모던 리액트 Deep Dive 스터디 (진행중, 2023.12 ~ )',
       },
       collapsed: false,
       items: [
