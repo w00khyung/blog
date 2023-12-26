@@ -93,7 +93,7 @@ const config: Config = {
         },
         // { to: '/dev', label: '개발', position: 'left' },
         {
-          to: '/me',
+          to: '/me/archive',
           label: '일상',
           position: 'left',
         },
