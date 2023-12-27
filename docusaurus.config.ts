@@ -67,7 +67,7 @@ const config: Config = {
       title: '우켱',
       logo: {
         alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo.png',
       },
       items: [
         {

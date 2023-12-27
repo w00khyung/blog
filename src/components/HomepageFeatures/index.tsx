@@ -12,6 +12,11 @@ export default function HomepageFeatures(): JSX.Element {
           <img src='/img/home_space.jpg' alt='GitHub Profile Image' />
         </div>
         <p className={styles.profile__description}>
+          {' '}
+          <span onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+            {hover ? <strong>기타</strong> : '🎸'}
+          </span>
+          와{' '}
           <span onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
             {hover ? <strong>우주</strong> : '🪐'}
           </span>
