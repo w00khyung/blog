@@ -39,18 +39,15 @@ const config: Config = {
           sidebarPath: require.resolve('./sidebars.ts'),
         },
         blog: {
-          routeBasePath: '/dev',
-          showReadingTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          blogTitle: '우켱의 기술 블로그',
-          blogDescription: '우켱의 기술 블로그입니다.',
-          postsPerPage: 'ALL',
-          blogSidebarTitle: 'All posts',
-          blogSidebarCount: 'ALL',
-          readingTime: ({ content, frontMatter, defaultReadingTime }) =>
-            defaultReadingTime({ content, options: { wordsPerMinute: 300 } }),
+          // routeBasePath: '/dev',
+          // showReadingTime: true,
+          // blogTitle: '우켱의 기술 블로그',
+          // blogDescription: '우켱의 기술 블로그입니다.',
+          // postsPerPage: 'ALL',
+          // blogSidebarTitle: 'All posts',
+          // blogSidebarCount: 'ALL',
+          // readingTime: ({ content, frontMatter, defaultReadingTime }) =>
+          //   defaultReadingTime({ content, options: { wordsPerMinute: 300 } }),
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -80,18 +77,20 @@ const config: Config = {
           label: '개발',
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'book',
+          to: '/devlog/archive',
+          label: '블로그',
           position: 'left',
-          label: '서적',
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'article',
-          position: 'left',
+          to: '/article/archive',
           label: '아티클',
+          position: 'left',
         },
-        // { to: '/dev', label: '개발', position: 'left' },
+        {
+          to: '/book/archive',
+          label: '서적',
+          position: 'left',
+        },
         {
           to: '/me/archive',
           label: '일상',
@@ -131,6 +130,36 @@ const config: Config = {
   } satisfies Preset.ThemeConfig,
 
   plugins: [
+    [
+      '@docusaurus/plugin-content-blog',
+      {
+        id: 'devlog',
+        routeBasePath: 'devlog',
+        path: './devlog',
+        blogSidebarTitle: '최근 글',
+        blogTitle: '블로그',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-blog',
+      {
+        id: 'article',
+        routeBasePath: 'article',
+        path: './article',
+        blogSidebarTitle: '최근 글',
+        blogTitle: '아티클',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-blog',
+      {
+        id: 'book',
+        routeBasePath: 'book',
+        path: './book',
+        blogSidebarTitle: '최근 글',
+        blogTitle: '서적',
+      },
+    ],
     [
       '@docusaurus/plugin-content-blog',
       {

@@ -1,5 +1,7 @@
 ---
-sidebar_position: 1
+slug: react-forget
+title: 리액트 Forget
+tags: [리액트]
 ---
 
 # 리액트 Forget
