@@ -1,11 +1,57 @@
 .features {
   display: flex;
   align-items: center;
-  padding: 2rem 0;
   width: 100%;
 }
 
-.featureSvg {
-  height: 200px;
-  width: 200px;
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile__image {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.profile__image img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+.profile__description {
+  font-size: 1.5rem;
+}
+
+/* @media screen and (max-width: 996px) {
+  .profile {
+    padding: 2rem;
+  }
+  .profile__image img {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .profile__image img {
+    width: 80%;
+  }
+} */
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -105,22 +105,22 @@ const config: Config = {
       ],
     },
     footer: {
-      style: 'dark',
-      links: [
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'Velog (Deprecated)',
-              href: 'https://velog.io/@ctdlog',
-            },
-            {
-              label: 'GitHub',
-              href: 'https://github.com/ctdlog',
-            },
-          ],
-        },
-      ],
+      style: 'light',
+      // links: [
+      //   {
+      //     title: 'More',
+      //     items: [
+      //       {
+      //         label: 'Velog (Deprecated)',
+      //         href: 'https://velog.io/@ctdlog',
+      //       },
+      //       {
+      //         label: 'GitHub',
+      //         href: 'https://github.com/ctdlog',
+      //       },
+      //     ],
+      //   },
+      // ],
       copyright: `Copyright © ${new Date().getFullYear()} Wookhyung, Inc. Built with Docusaurus.`,
     },
     prism: {
