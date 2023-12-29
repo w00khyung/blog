@@ -23,7 +23,7 @@ export default function BlogPostItemWrapper(props) {
       const script = document.createElement('script');
 
       script.src = 'https://giscus.app/client.js';
-      script.setAttribute('data-repo', 'ctdlog/ctdlog.github.io');
+      script.setAttribute('data-repo', 'ctdlog/blog');
       script.setAttribute('data-repo-id', 'R_kgDOK7up_g');
       script.setAttribute('data-category', 'Announcements');
       script.setAttribute('data-category-id', 'DIC_kwDOK7up_s4Cb5p5');
