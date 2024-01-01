@@ -86,11 +86,11 @@ const config: Config = {
           label: '아티클',
           position: 'left',
         },
-        {
-          to: '/book/archive',
-          label: '서적',
-          position: 'left',
-        },
+        // {
+        //   to: '/book/archive',
+        //   label: '서적',
+        //   position: 'left',
+        // },
         {
           to: '/me/archive',
           label: '일상',

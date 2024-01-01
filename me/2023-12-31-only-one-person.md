@@ -1,7 +1,7 @@
 ---
 slug: only-one-person
 title: 단 한 사람
-tags: [소설]
+tags: [서적]
 ---
 
 # 단 한 사람

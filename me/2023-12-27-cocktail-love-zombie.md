@@ -1,7 +1,7 @@
 ---
 slug: cocktail-love-zombie
 title: 칵테일, 러브, 좀비
-tags: [소설]
+tags: [서적]
 ---
 
 # 칵테일, 러브, 좀비
