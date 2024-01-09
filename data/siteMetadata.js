@@ -1,6 +1,6 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Wookhyung Dev Blog',
+  title: '우켱의 개발 블로그 | wookhyung.dev',
   author: 'wookhyung',
   headerTitle: 'wookhyung.dev',
   description: '',
