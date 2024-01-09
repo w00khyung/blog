@@ -11,7 +11,7 @@ const siteMetadata = {
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
-  email: 'mesmerize0416@naver.com',
+  email: 'qpflapffhs76@gmail.com',
   github: 'https://github.com/ctdlog',
   youtube: 'https://youtube.com/',
   locale: 'ko-KR',
