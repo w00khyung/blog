@@ -1,18 +1,18 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: '우켱의 개발 블로그 | wookhyung.dev',
+  title: 'blog | wookhyung.dev',
   author: 'wookhyung',
   headerTitle: 'wookhyung.dev',
   description: '',
   language: 'ko-kr',
   theme: 'system', // system, dark or light
   siteUrl: 'https://wookhyung.vercel.app/',
-  siteRepo: 'https://github.com/ctdlog/blog',
+  siteRepo: 'https://github.com/w00khyung/blog',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'qpflapffhs76@gmail.com',
-  github: 'https://github.com/ctdlog',
+  github: 'https://github.com/w00khyung',
   youtube: 'https://youtube.com/',
   locale: 'ko-KR',
   analytics: {
