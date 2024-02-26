@@ -1,0 +1,128 @@
+---
+title: App Router 톺아보기 - 1 (w/ Next.js Conf 2022)
+date: '2023-02-26'
+tags: ['Next.js']
+draft: false
+summary: Next.js Conf 2022로 살펴보는 App Router
+---
+
+# Next.js Conf 2022로 톺아보는 App Router
+
+## Next.js Conf 2022에서 처음으로 언급된 New Next.js Router
+
+2022년 10월 25일에 진행된 [Next.js Conf 2022](https://www.youtube.com/live/NiknNI_0J48?feature=shared&t=612) 에서 `New Next.js Router`가 처음 언급되었다. 영상에서는 Vercel의 시니어 개발자인 [Delba Oliveria](https://twitter.com/delba_oliveira)가 10분 15초부터 16분 20초까지 약 5분 정도 `New Next.js Router`인 `App Router`에 대해서 설명하는데 내용을 요약해보았다. (~~다른 영상에서도 자주 봤던 분이라 내적 친밀감 있음)~~
+
+---
+
+> **_의역한 부분 일부 있어 틀린 부분이 있을 수 있습니다. 꼭 [원본 영상](https://www.youtube.com/live/NiknNI_0J48?feature=shared&t=612)을 참고해주시길 바랍니다._**
+
+## New Router & Data fetching 요약
+
+### Most loved feature, File system based router
+
+File system based router는 Next.js에서 가장 사랑받는 기능 중 하나다. 별도 설정 없이도 폴더 안에 파일을 놓으면 경로를 생성할 수 있다.
+
+이 라우터는 지난 6년 동안 전 세계에서 매일 수십억 건의 페이지 뷰를 기록할 정도로 널리 사용되었고, 이는 더 좋은 라우터를 제공할 기회를 식별할 수 있게 도왔다.
+
+### New Router, App directory
+
+라우팅 방식이 변화하면서 애플리케이션 코드(컴포넌트, 테스트 및 스타일 등)와 라우트를 공존시키는 것이 더 쉬워지고 팀 자체적인 컨벤션을 만들 필요가 없어지도록 도와준다.
+
+> 💡 **팀 자체적인 컨벤션을 만들 필요가 없어진다?**
+>
+> 기존 Pages Router 방식에서는 pages 디렉터리 내에 파일을 만들면 파일 이름이 라우팅 경로가 되었기 때문에 실제로 라우팅 경로로 이용할 파일 외의 다른 파일들은 pages 디렉터리 외부에 생성해야 했다. 그래서 pages 외부 디렉터리를 어떻게 설계할지에 대한 컨벤션이 필요했다.
+
+```bash
+# Pages Router
+pages
+ ┣ index.tsx
+ ┣ something-component.tsx # ❌ /something-component 경로로 라우팅 된다.
+ ┃ topics
+ ┃ ┗ [slug].tsx
+```
+
+```bash
+# App Router
+app
+ ┣ NavBar.tsx # ✅ 라우팅과 연결되지 않는다. (co-location)
+ ┣ page.tsx
+ ┣ page.test.ts
+ ┣ styles.css
+ ┃ topics
+ ┃ ┗ [slug]
+ ┃   ┗ page.tsx
+
+```
+
+### Layouts
+
+공통적으로 사용될 레이아웃 컴포넌트에 데이터 fetching을 배치하여, 전역 데이터를 쉽게 가져올 수 있다.
+
+여러 페이지 간에 UI를 공유할 때, `layout.js` 파일을 통해 UI를 공유하며, 클라이언트와 서버 간 작업이 간소화되는 장점이 있다. 또한 경로 변경 시에도 상태가 유지되고 애니메이션이 지속되는 등의 편의성을 제공한다. 이를 통해 비용이 많이 드는 re-render나 애니메이션 re-trigger을 방지할 수 있다.
+
+```bash
+app
+ ┣ layout.tsx
+ ┣ blog
+ ┃ ┣ layout.tsx # 레이아웃은 중첩될 수도 있다.
+ ┃ ┗ page.tsx
+ ┃ ┗ [slug]
+ ┃   ┗ page.tsx
+```
+
+```tsx
+export default async function Layout() {
+	let topics: Topic[]
+	const user = await getUser()
+	if (user) {
+		topics = await getUserFavoriteTopics(user)
+	} else {
+		topics = await getDefaultTopics()
+	}
+
+	return (
+		<div>{topics.map(...)}</div>
+	)
+}
+```
+
+### with React 18
+
+리액트에서 concurrent feature를 비롯한 다년간의 아키텍처 개선이 있었고, file system based router를 업그레이드 할 수 있는 완벽한 환경이 만들어졌다.
+
+대량의 JavaScript를 방지하면서 서버에서 데이터를 가져오고 스트리밍하는 방법은 무엇인가요? 클라이언트에서 `Waterfall`을 방지할 수 있을까요? 이를 해결하기 위해 React 및 Next.js와 협력하여 데이터 불러오기를 간소화하는 새로운 솔루션을 도입했습니다. 이로써 앱 전체, 레이아웃, 페이지, 컴포넌트, 후크 등에서 스트리밍 데이터를 활용할 수 있게 되었습니다.
+
+`loading.js` 를 통해 페이지 간 전환에서 특정 컨텐츠를 스트리밍 하는 동안 로딩 상태를 렌더링 할 수 있으며, `error.js` 를 통해 사용자가 정의한 에러 처리 상태를 렌더링할 수 있다.
+
+```bash
+app
+ ┣ layout.tsx
+ ┣ page.tsx
+ ┣ error.tsx
+ ┃ [topic]
+ ┃ ┗ loading.tsx
+ ┃ ┗ page.tsx
+```
+
+### ISR, SSG, SSR → One solution
+
+이것은 ISR, 정적 데이터 가져오기, 서버 측 데이터 가져오기 및 심지어 SWR의 모든 이점이 이제 하이브리드 솔루션 하나에 통합되었다는 것을 의미한다. 우리의 라우터가 RSC(React Server Component)를 기반으로 구축되었기 때문에, 모든 것이 이제 서버 기반이다.
+
+기본적으로 JavaScript를 대폭 줄이면서도 풍부한 상호 작용형 클라이언트 측 경험을 유지할 수 있다. 새로운 React 기본 요소 덕분에 로딩 및 오류 상태를 처리하는 편리한 방법, UI가 렌더링될 때 스트리밍되는 것을 가능하게 하는 방법 및 미래에는 데이터를 변경할 수 있는 방법이 제공된다.
+
+```tsx
+// ISR
+await fetch('https://api.acme.com/movies', {
+  next: { revalidate: 10 },
+})
+
+// SSG
+await fetch('https://api.acme.com/movies', {
+  cache: 'force-static', // default
+})
+
+// SSR
+await fetch('https://api.acme.com/movies', {
+  cache: 'no-store', // default
+})
+```
