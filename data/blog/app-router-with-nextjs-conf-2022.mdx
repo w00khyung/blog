@@ -1,0 +1,310 @@
+---
+title: App Router 살펴보기 (w/ Next.js Conf 2022, React Blog)
+date: '2024-02-26'
+tags: ['Next.js']
+draft: false
+summary: Next.js Conf 2022로 살펴보는 App Router
+---
+
+![](https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/6eVOPSd4B1a94uF7b1dSLt/17f78399e225eec286e0d5ff1adb59fd/OG_Image__1_.png)
+
+# Next.js Conf 2022로 살펴보는 App Router
+
+## Next.js Conf 2022에서 처음으로 언급된 New Next.js Router
+
+2022년 10월 25일에 진행된 [Next.js Conf 2022](https://www.youtube.com/live/NiknNI_0J48?feature=shared&t=612)에서 `New Next.js Router`가 처음 언급되었다. 영상에서는 Vercel의 시니어 개발자인 [Delba Oliveria](https://twitter.com/delba_oliveira)가 10분 15초부터 16분 20초까지 약 5분 정도 `New Next.js Router`인 `App Router`에 대해서 설명하는데 내용을 요약해보았다. (~~다른 영상에서도 자주 봤던 분이라 내적 친밀감 있음)~~
+
+---
+
+> ❗️주의사항
+>
+> 글의 순서가 원본 영상에서 발표하는 순서랑 다르고 의역한 부분이 일부 있어 내용이 다른 부분이 있을 수 있습니다. 참고를 위해 원문 스크립트를 달아두었으나, 정확한 내용 확인을 위해 꼭 [원본 영상](https://www.youtube.com/live/NiknNI_0J48?feature=shared&t=612)을 참고해주시길 바랍니다.
+> 2022년에 발표된 자료이기 때문에 현재(2024년)와 달라진 내용이 있을 수 있습니다. 최신 내용은 [공식 문서](https://nextjs.org/docs)를 참고해주세요.
+
+## New Router & Data fetching 요약
+
+### Most loved feature, File system based router
+
+<span style={{ color: 'gray' }}>
+  One of the most loved features of Next.js is our file system based router. Drop a file inside a
+  folder and you're able to instantly create routes in your application, no configuration required.
+</span>
+
+File system based router는 Next.js에서 가장 사랑받는 기능 중 하나입니다. 별도 설정 없이도 폴더 안에 파일을 놓으면 경로를 생성할 수 있습니다.
+
+```bash
+# File system based router
+pages
+ ┗ foo.tsx # 파일 이름이 라우팅 경로가 된다. (/foo)
+```
+
+<span style={{ color: 'gray' }}>
+  Over the past six years, our router has helped view some of the largest web applications in the
+  world, spending billions of daily page views. This has helped us identify some incredible
+  opportunities to continue delivering on the best possible router.
+</span>
+
+이 라우터는 지난 6년 동안 전 세계에서 매일 수십억 건의 페이지 뷰를 기록할 정도로 널리 사용되었고,
+이는 우리가 최상의 라우터를 계속 제공하기 위한 놀라운 기회를 발견하는 데 도움이 되었습니다.
+
+### New Router, App directory
+
+<span style={{ color: 'gray' }}>
+  We can make it easier to co-locate data fetching inside components, enabling global data fetching
+  in your application.
+</span>
+
+우리는 <span style={{ color: "#fca5a5" }}>**컴포넌트 내부에서 데이터를 가져오는 것을 쉽게 만들어**</span> 전체 애플리케이션에서 전역 데이터 가져오기를 가능하게 할 수 있습니다.
+
+> 💡 **컴포넌트 내부에서 데이터를 가져올 수 있다?**
+>
+> Pages Router 방식에서는 Server-Side에서 실행되는 getServerSideProps, getStaticProps 같은 데이터 fetching 함수들을 pages 디렉터리 내부에 있는 파일들에서만 사용할 수 있었다. App Router에서는 디폴트가 RSC(React Server Component)이기 때문에 어느 컴포넌트에서든 Server-Side에서 가능한 로직들을 실행할 수 있다.
+
+#### Pages Router
+
+```tsx
+// pages/index.js
+export function getServerSideProps() {
+  const user = await getUser() // ✅ 가능하다.
+
+  return {
+    props: {
+      user
+    }
+  }
+}
+
+export default async function Page(props) {
+	...
+}
+```
+
+```tsx
+// components/nav-bar.js
+export function getServerSideProps() {
+  const user = await getUser() // ❌ 불가능하다.
+
+  return {
+    props: {
+      user
+    }
+  }
+}
+
+export default async function NavBar(props) {
+	...
+}
+```
+
+#### App Router
+
+```tsx
+// app/page.js
+export default async function Page() {
+	const user = await getUser() // ✅ 가능하다.
+
+	return ...
+}
+```
+
+```tsx
+// components/nav-bar.js
+export default async function NavBar() {
+	const user = await getUser() // ✅ 이것 또한 가능하다!
+
+	return ...
+}
+```
+
+<span style={{ color: 'gray' }}>
+  For example, when you have dynamic data requirements that are shared across pages, we can make it
+  easier to co-locate your application code with your routes, like components, tests, and styles so
+  that you and your team don't have to come up with your own conventions and configuration.
+</span>
+
+라우팅 방식이 변화하면서 애플리케이션 코드(컴포넌트, 테스트 및 스타일 등)와 라우트를 공존시키는 것이 더 쉬워지고 <span style={{ color: "#fca5a5" }}>**팀 자체적인 컨벤션을 만들 필요가 없어지도록 도와줍니다.**</span>
+
+> 💡 **팀 자체적인 컨벤션을 만들 필요가 없어진다?**
+>
+> 기존 Pages Router 방식에서는 pages 디렉터리 내에 파일을 만들면 파일 이름이 라우팅 경로가 되었기 때문에 실제로 라우팅 경로로 이용할 파일 외의 다른 파일들은 pages 디렉터리 외부에 생성해야 했다. 그래서 pages 외부 디렉터리를 어떻게 설계할지에 대한 컨벤션이 필요했다.
+
+```bash
+# Pages Router
+pages
+ ┣ index.js
+ ┣ something-component.js # ❌ /something-component 경로로 라우팅 된다.
+ ┃ topics
+ ┃ ┗ [slug].js
+```
+
+```bash
+# App Router
+app
+ ┣ NavBar.js # ✅ 라우팅과 연결되지 않는다. (co-location)
+ ┣ page.js
+ ┣ page.test.js
+ ┣ styles.css
+ ┃ topics
+ ┃ ┗ [slug]
+ ┃   ┗ page.js
+```
+
+### Layouts
+
+<span style={{ color: 'gray' }}>
+  Let's create the individual topic page that the sidebar links to. This uses the same syntax you're
+  already familiar with for nesting and dynamic routes. I want to reuse the sidebar and the
+  navigation from my homepage on the topic page. So I can refactor my component into a layout.js
+  file that shares UI between the two pages. Not only is this more convenient for me,but as I
+  navigate, only a small portion of the screen rerenders streamlining the work, both on the client
+  and the server. Notice how the search field preserves state and the animations continue despite
+  the route changes.
+</span>
+
+사이드바에서 링크하는 개별 주제 페이지를 만들어 보겠습니다. 이는 이미 중첩 및 동적 경로에 대해 익숙한 구문을 사용합니다. 주제 페이지에서 홈페이지와 동일한 사이드바와 네비게이션을 재사용하고 싶습니다. 그래서 내 컴포넌트를 두 페이지 간에 UI를 공유하는 `layout.js` 파일로 리팩토링할 수 있습니다. 이렇게 함으로써 제가 편리해지는 것은 물론, 내비게이션하는 동안 화면의 작은 부분만 다시 렌더링되어 클라이언트와 서버 모두에서 작업이 간소화됩니다. 경로가 변경되더라도 검색 필드가 상태를 유지하고 애니메이션이 지속되는 것을 주목하세요.
+
+```bash
+app
+ ┣ layout.js
+ ┣ blog
+ ┃ ┣ layout.js # 레이아웃은 중첩될 수도 있다.
+ ┃ ┗ page.js
+ ┃ ┗ [slug]
+ ┃   ┗ page.js # slug가 변경되어도 layout은 리렌더링 되지 않는다.
+```
+
+```tsx
+<Layout>
+  <BlogLayout>
+    {' '}
+    // ✅ 중첩된 레이아웃은 이런 식으로 배치된다.
+    <BlogPage />
+  </BlogLayout>
+</Layout>
+```
+
+### with React 18
+
+<span style={{ color: 'gray' }}>
+  These opportunities for improvement in combination with Reacts multi-year architectural investment
+  into concurrent features created the perfect environment to upgrade the web's most popular file
+  system based router.
+</span>
+
+이러한 개선 기회는 React의 다년간의 <span style={{ color: "#fca5a5" }}>**동시성 기능**</span>에 대한 아키텍처 투자를 통해 만들어진 완벽한 환경과 결합하여 웹의 가장 인기있는 파일 시스템 기반 라우터를 업그레이드하는 데 이상적인 조건을 만들었습니다.
+
+> 💡 React 18의 동시성 기능이란?
+>
+> 리액트의 동시성 렌더링(Concurrent Rendering)은 2022년 3월에 발표된 React 18에서 처음 등장했습니다. 동시성 렌더링을 설명하려면 많은 부분을 다뤄야 하기 때문에 이 포스팅에서는 깊게 다루지 않고 React Blog에 올라와있는 [React v18.0](https://react.dev/blog/2022/03/29/react-v18#what-is-concurrent-react)을 통해서 개요만 빠르게만 훑어보겠습니다.
+>
+> - Concurrent React는 React 18에서 가장 중요한 추가 기능으로, React의 핵심 렌더링 모델에 대한 업데이트입니다.
+> - Concurrent React의 중요한 특성 중 하나는 중단 가능하다는 것이다. 동기식 렌더링에서는 렌더링을 시작하면 사용자가 결과를 화면에서 볼 때까지 중단할 수 없지만, 동시성 렌더링에서는 그렇지 않습니다. React는 업데이트를 시작할 수 있고, 중간에 일시 중지할 수 있고, 나중에 계속할 수도 있습니다.
+> - Suspense, transitions, streaming server rendering를 비롯한 대부분의 새로운 기능이 동시성 렌더링을 활용하도록 구축되었습니다.
+
+<span style={{ color: 'gray' }}>
+  So how do you fetch and stream data from the server while preventing large amounts of JavaScript
+  and waterfalls on the client? We've worked with the React core team to deliver new solution to
+  simplify fetching for all of React and Next.js, and you can try it today.
+</span>
+
+클라이언트에서 대량의 JavaScript와 워터폴을 방지하면서 서버에서 데이터를 가져오고 스트리밍하는 방법은 어떻게 해야 할까요? 저희는 React 핵심 팀과 협력하여 React 및 Next.js의 모든 사용자를 위한 <span style={{ color: "#fca5a5" }}>**데이터 가져오기를 간소화하는 새로운 솔루션**</span>을 개발했습니다.
+
+> 💡 데이터 가져오기를 간소화하는 새로운 솔루션, React Server Components
+>
+> React Server Component, RSC는 2020년 12월에 React Blog에 올라온 [Introducing Zero-Bundle-Size React Server Components](https://react.dev/blog/2020/12/21/data-fetching-with-react-server-components), [RFC: React Server Components](https://github.com/reactjs/rfcs/pull/188)를 통해 처음 소개되었다. RSC에 대해서도 모든 내용을 다루기는 힘들기 때문에 간단하게만 살펴봅시다.
+>
+> - 2023년에 3월에 작성된 [React Labs: What We've Been Working On – March 2023](https://react.dev/blog/2023/03/22/react-labs-what-we-have-been-working-on-march-2023)에서는 React Server Components(RSC)를 React 팀이 설계한 새로운 애플리케이션 아키텍처라고 설명합니다.
+> - RSC는 빌드 중에 실행되고 JavaScript 번들에서 제외되는 새로운 종류의 컴포넌트입니다. 파일 시스템을 읽거나, 정적 컨텐츠 가져오는 작업을 빌드 중에 실행할 수 있으며 서버에서 실행되기 때문에 API 없이도 데이터 레이어에 접근할 수 있습니다.
+> - RSC는 서버 중심 Multi-Page Apps(MPA)의 간단한 "request/response" 메타 모델과 클라이언트 중심의 Single-Page Apps(SPA)의 매끄러운 상호 작용성을 결합하여 양쪽의 장점을 모두 제공합니다.
+> - 가장 큰 변경 사항은 데이터 가져오기를 위한 주요 방법으로 [async/await](https://github.com/reactjs/rfcs/pull/229)을 소개한 것입니다. 또한 use라는 새로운 훅을 통해 클라이언트에서 데이터 로딩을 지원할 계획입니다.
+> - 더 자세한 내용은 [Data Fetching with React Server Components](https://youtu.be/TQQPAU21ZUw?si=4ijK7ED1F3Afdues) 영상을 보는 것을 추천합니다.
+
+<span style={{ color: 'gray' }}>
+  This is what my data fetching code looks like for the sidebar using the brand new data fetching
+  API. It's extremely simple and in-lined right inside my application code. The best part, I can
+  sprinkle streaming data fetching throughout my entire app, layouts, pages, components, and even
+  hooks.
+</span>
+
+여기서 새로운 데이터 불러오기 API를 사용하여 사이드바의 데이터를 가져오는 제 코드를 살펴볼 수 있습니다. 이 코드는 애플리케이션 코드 안에 매우 간단하게 내장되어 있습니다. 가장 좋은 점은 이제 전체 앱, 레이아웃, 페이지, 컴포넌트, 심지어 훅에서 스트리밍 데이터 불러오기를 사용할 수 있다는 것입니다.
+
+```tsx
+export default async function Layout() {
+	let topics: Topic[]
+	const user = await getUser()
+	if (user) {
+		topics = await getUserFavoriteTopics(user)
+	} else {
+		topics = await getDefaultTopics()
+	}
+
+	return (
+		<div>{topics.map(...)}</div>
+	)
+}
+```
+
+<span style={{ color: 'gray' }}>
+  Our shared UI between the home and the topic page can now fetch and reuse data.
+</span>
+
+<span style={{ color: 'gray' }}>
+  Let's now define a new loading stage for our topic page with loading.js.
+</span>
+
+<span style={{ color: 'gray' }}>
+  Notice how when I transition between pages we serve and render an instant loading state while
+  we're streaming the rest of our content. Similarly, we allow custom error handling with the
+  error.js convention. To preserve the flexibility and scalability that you've come to love about
+  Next.js data fetching, we're extending the run time with additions like built-in caching,
+  deduplication of requests, programmatic revalidations, and granular purging of data.
+</span>
+
+홈과 주제 페이지 사이에서 공유되는 UI는 이제 데이터를 가져와 재사용할 수 있습니다.
+
+이제 주제 페이지의 새로운 로딩 단계를 `loading.js`로 정의해 보겠습니다. 페이지 간 이동 시 나머지 콘텐츠를 스트리밍하는 동안 즉시 로딩 상태를 제공하고 렌더링하는 것을 주목하세요. 비슷하게, `error.js` 규칙을 사용하여 사용자 정의 오류 처리를 허용합니다. Next.js 데이터 불러오기에 대한 유연성과 확장성을 유지하기 위해 런타임을 내장된 캐싱, 요청 중복 제거, 프로그래밍 방식의 재검증, 데이터의 세분화된 삭제와 같은 추가로 확장합니다.
+
+```bash
+app
+ ┣ layout.js
+ ┣ page.js
+ ┣ error.js
+ ┃ [topic]
+ ┃ ┗ loading.js
+ ┃ ┗ page.js
+```
+
+### ISR, SSG, SSR, even SWR → Hybrid solution
+
+<span style={{ color: 'gray' }}>
+  This means that all the benefits of ISR, static data fetching, service side data fetching, and
+  even SWR are now all in one hybrid solution. Because our router builds on React server components,
+  everything we just defined for this product is now server first. You can maintain rich interactive
+  client-side experiences all while you're shipping dramatically less JavaScript by default. Thanks
+  to the new React primitives, we're enabling ergonomic ways to handle loading and error states,
+  streaming UI as it's rendered, and in the future, even mutate data. This new API is made possible
+  by years of investment into the React ecosystem.
+</span>
+
+이것은 ISR, 정적 데이터 불러오기, 서버 측 데이터 불러오기 및 심지어 SWR의 모든 이점이 이제 하이브리드 솔루션으로 통합되었다는 것을 의미합니다. 우리의 라우터가 React Server Component를 기반으로 하기 때문에, 이 제품을 위해 방금 정의한 모든 것이 이제 서버 우선적입니다. 기본적으로 드라마틱하게 적은 양의 JavaScript를 배포하면서도 풍부한 인터랙티브한 클라이언트 측 경험을 유지할 수 있습니다. 새로운 React 프리미티브 덕분에, 로딩 및 오류 상태를 다루는 ergonomic한 방법을 제공하고, UI가 렌더링되는 동안 스트리밍 UI를 처리하며, 미래에는 데이터를 변경할 수도 있습니다. 이 새로운 API는 React 생태계에 수년간의 투자로 가능해졌습니다.
+
+```tsx
+// This request should be cached until manually invalidated.
+// Similar to `getStaticProps`.
+// `force-cache` is the default and can be omitted.
+fetch(URL, { cache: 'force-cache' })
+
+// This request should be refetched on every request.
+// Similar to `getServerSideProps`.
+fetch(URL, { cache: 'no-store' })
+
+// This request should be cached with a lifetime of 10 seconds.
+// Similar to `getStaticProps` with the `revalidate` option.
+fetch(URL, { next: { revalidate: 10 } })
+```
+
+---
+
+# 결론
+
+Next.js Conf 2022에서 발표된 영상을 토대로 App Router에 대해서 알아보았습니다. 작성중 . . .
