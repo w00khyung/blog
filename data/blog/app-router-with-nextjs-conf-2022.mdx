@@ -14,12 +14,14 @@ summary: Next.js Conf 2022로 살펴보는 App Router
 
 2022년 10월 25일에 진행된 [Next.js Conf 2022](https://www.youtube.com/live/NiknNI_0J48?feature=shared&t=612)에서 `New Next.js Router`가 처음 언급되었다. 영상에서는 Vercel의 시니어 개발자인 [Delba Oliveria](https://twitter.com/delba_oliveira)가 10분 15초부터 16분 20초까지 약 5분 정도 `New Next.js Router`인 `App Router`에 대해서 설명하는데 내용을 요약해보았다. (~~다른 영상에서도 자주 봤던 분이라 내적 친밀감 있음)~~
 
----
-
 > ❗️주의사항
 >
 > 글의 순서가 원본 영상에서 발표하는 순서랑 다르고 의역한 부분이 일부 있어 내용이 다른 부분이 있을 수 있습니다. 참고를 위해 원문 스크립트를 달아두었으나, 정확한 내용 확인을 위해 꼭 [원본 영상](https://www.youtube.com/live/NiknNI_0J48?feature=shared&t=612)을 참고해주시길 바랍니다.
 > 2022년에 발표된 자료이기 때문에 현재(2024년)와 달라진 내용이 있을 수 있습니다. 최신 내용은 [공식 문서](https://nextjs.org/docs)를 참고해주세요.
+
+<TOCInline toc={props.toc} exclude="Next.js Conf 2022로 살펴보는 App Router" />
+
+---
 
 ## New Router & Data fetching 요약
 
@@ -174,10 +176,9 @@ app
 ```
 
 ```tsx
+// ✅ 중첩된 레이아웃은 이런 식으로 배치된다.
 <Layout>
   <BlogLayout>
-    {' '}
-    // ✅ 중첩된 레이아웃은 이런 식으로 배치된다.
     <BlogPage />
   </BlogLayout>
 </Layout>
@@ -305,6 +306,13 @@ fetch(URL, { next: { revalidate: 10 } })
 
 ---
 
-# 결론
+# 참고
 
-Next.js Conf 2022에서 발표된 영상을 토대로 App Router에 대해서 알아보았습니다. 작성중 . . .
+- [Next.js Conf 2022](https://www.youtube.com/live/NiknNI_0J48?feature=shared&t=612)
+- [Next.js Docs](https://nextjs.org/docs)
+- [React v18.0](https://react.dev/blog/2022/03/29/react-v18#what-is-concurrent-react)
+- [Introducing Zero-Bundle-Size React Server Components](https://react.dev/blog/2020/12/21/data-fetching-with-react-server-components)
+- [RFC: React Server Components](https://github.com/reactjs/rfcs/pull/188)
+- [patterns.dev - React Server Components](https://patterns-dev-kr.github.io/rendering-patterns/react-server-components)
+- [React Labs: What We've Been Working On – March 2023](https://react.dev/blog/2023/03/22/react-labs-what-we-have-been-working-on-march-2023)
+- [Data Fetching with React Server Components](https://youtu.be/TQQPAU21ZUw?si=4ijK7ED1F3Afdues)
