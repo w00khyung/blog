@@ -7,12 +7,12 @@ const siteMetadata = {
   language: 'ko-kr',
   theme: 'system', // system, dark or light
   siteUrl: 'https://wookhyung.vercel.app/',
-  siteRepo: 'https://github.com/w00khyung/blog',
+  siteRepo: 'https://github.com/wook-hyung/blog',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'qpflapffhs76@gmail.com',
-  github: 'https://github.com/w00khyung',
+  github: 'https://github.com/wook-hyung',
   youtube: 'https://youtube.com/',
   locale: 'ko-KR',
   analytics: {
