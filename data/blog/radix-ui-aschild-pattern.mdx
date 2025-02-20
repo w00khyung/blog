@@ -1,0 +1,268 @@
+---
+title: Radix UI, asChild pattern에 대해서
+date: '2024-03-20'
+tags: ['React']
+draft: false
+summary: Radix UI, asChild pattern의 내부 구현 방식에 대해서 알아보자.
+---
+
+![](/static/images/radix-ui.png)
+
+<TOCInline toc={props.toc} />
+
+## 👋 시작하기에 앞서서
+
+최근 Storybook을 통해서 디자인 시스템을 구축하다가 공통 컴포넌트의 태그를 변경하거나 공통 컴포넌트의 동작을 children으로 받는 자식 컴포넌트로 넘기고 싶은 경우가 있었다.
+
+예를 들어, 공용 Button 컴포넌트를 사용하고 있는데 클릭 시 다른 페이지로 이동해야 하기 때문에 `button` 태그가 아닌 `Link` (`a` 태그)를 사용하고 싶을 수 있다.
+
+```tsx
+<Link href='...'>
+  <Button>
+    링크 이동
+  </Button>
+<Link>
+```
+
+이렇게 구현해도 작동하지만, HTML5 specification에 따르면 `button` 태그 내에 `a` 태그를 중첩하는 것은 명세를 위반하는 방법이다. (반대로 `button` 태그 내에 `a` 태그를 중첩해서 사용하는 것도)
+
+- https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-a-element
+
+> Content model:
+>
+> Transparent, but there must be no interactive content descendant, a element descendant, or descendant with the tabindex attribute specified.
+>
+> - https://html.spec.whatwg.org/multipage/dom.html#interactive-content-2
+
+`a` 태그 내부에는 상호 작용이 가능한 하위 요소, `a` 태그 하위 요소 또는 `tabindex` 속성이 지정된 하위 요소가 없어야 한다. 여기서 상호 작용이 가능한 하위 요소란 `button`, `input` (type 속성이 hidden이 아닌), `select` 등과 같이 상호작용을 위해 만들어진 태그들을 말한다.
+
+참고로 Next.js에서도 HTML 명세에 위반하여 중첩된 HTML 태그를 사용하는 경우, Hydration 에러를 발생시키며 위와 비슷한 설명이 공식문서에 써져있다.
+
+- https://nextjs.org/docs/messages/react-hydration-error#common-causes
+
+위와 같은 상황 때문에 필요 할 경우 컴포넌트의 기본 태그를 변경(`button` -> `a`)해서 사용하는 것이 좋으며, Chakra UI나 Reakit에서 자주 사용하는 as prop pattern을 사용할 수 있다.
+
+- https://chakra-ui.com/docs/styled-system/style-props#the-as-prop
+
+- https://reakit.io/docs/composition/#as-prop
+
+```tsx
+export function Button({ as, ...props }) {
+  const Comp = as ?? 'button'
+
+  return <Comp {...props} />
+}
+
+;<Button as={Link} />
+```
+
+그러나 더 많은 사용자 정의를 허용하려면, 예를 들어 하위 컴포넌트에 props에 전달하려면 `as` prop이 문제가 될 수 있다. TypeScript를 통해서 충분히 구현 가능하지만 설정하기가 복잡해지고 런타임에 느려질 수 있다.
+
+```tsx
+<Button
+  as='a'
+  target='_blank'
+  variant='outline'
+  href='...'
+  ...
+>
+  Hello
+</Button>
+```
+
+---
+
+## 🤔 asChild pattern
+
+`asChild` pattern은 Radix에서 많이 사용되며, `as` prop pattern에 비교하면 구현하기 쉬우며 이해하기에도 쉽다.
+
+```tsx
+<Button asChild>
+  <a target="_blank" href="..." />
+</Button>
+```
+
+- asChild 가 false일 때, 기본 컴포넌트(button)를 렌더링한다.
+- asChild 가 true일 때는 자식 컴포넌트(a)를 렌더링한다.
+
+Radix를 사용하다 보면 주로 `Trigger` 같은 컴포넌트에서 `asChild` props를 만나게 되는데, 설명과 함께 어떻게 사용하고 있는지 살펴보자. Radix에서 `asChild`의 툴팁에는 다음과 같이 설명되어 있다.
+
+> 자식으로 전달된 요소의 기본 렌더링 요소를 변경하여 props와 동작을 병합한다.
+
+설명만 들으면 난해한데, 예제 코드를 살펴보자.
+
+- https://www.radix-ui.com/primitives/docs/guides/composition
+
+```tsx
+import * as React from 'react'
+import * as Tooltip from '@radix-ui/react-tooltip'
+
+export default () => (
+  <Tooltip.Root>
+    <Tooltip.Trigger asChild>
+      ✅ a 태그에 Tooltip.Trigger의 props와 동작이 자식 태그인 a로 병합된다.
+      <a href="https://www.radix-ui.com/">Radix UI</a>
+    </Tooltip.Trigger>
+    <Tooltip.Portal>…</Tooltip.Portal>
+  </Tooltip.Root>
+)
+```
+
+다만, 위 같이 기본 태그를 변경(`button` -> `a`)하기로 결정했다면, 접근성과 기능을 유지할 수 있도록 하는 것은 사용자의 책임이다. 예를 들어 Tooltip.Trigger는 포인터 및 키보드 이벤트에 반응할 수 있는 포커스 가능한 요소여야 한다. 만약 이를 `div` 태그로 변경하면 더 이상 액세스할 수 없게 된다.
+
+실제로는 위처럼 기본 DOM 요소를 직접 수정해야 하는 일은 거의 없고, 대신 자체 React 컴포넌트를 사용하는 것이 더 일반적이다. Trigger의 경우 주로 사용되는 이유가 디자인 시스템의 사용자 정의 버튼, 링크와 함께 Trigger의 기능을 병합해서 사용하고자 하기 때문이다.
+
+```tsx
+import * as React from 'react'
+import * as Tooltip from '@radix-ui/react-tooltip'
+
+export default () => (
+  <Tooltip.Root>
+    <Tooltip.Trigger asChild>
+      ✅ Button 컴포넌트에 Trigger의 기능이 병합된다.
+      <Button>Radix UI</Button>
+    </Tooltip.Trigger>
+    <Tooltip.Portal>…</Tooltip.Portal>
+  </Tooltip.Root>
+)
+```
+
+---
+
+## 🔍 Slot Component
+
+그렇다면 asChild pattern은 어떻게 구현할 수 있을까? Radix의 소스코드를 통해 어떻게 구현되어 있는지 살펴보자.
+
+radix-ui/themes의 base-button.tsx 소스코드를 보면 Slot 컴포넌트를 통해서 구현되어 있는걸 확인할 수 있다.
+
+- https://github.com/radix-ui/themes/blob/main/packages/radix-ui-themes/src/components/base-button.tsx
+
+```tsx
+const BaseButton = React.forwardRef<BaseButtonElement, BaseButtonProps>((props, forwardedRef) => {
+  ...
+  const {
+    ...
+    asChild,
+  } = extractProps(props, baseButtonPropDefs, marginPropDefs);
+  const Comp = asChild ? Slot : 'button';
+  return (
+    <Comp>
+      {props.loading ? (
+        <>
+          ...
+        </>
+      ) : (
+        children
+      )}
+    </Comp>
+  );
+});
+```
+
+Radix 공식문서에 따르면, Slot 컴포넌트는 props를 자식에 병합하기 위한 컴포넌트다.
+
+- https://www.radix-ui.com/primitives/docs/utilities/slot
+
+```tsx
+import React from 'react'
+import { Slot } from '@radix-ui/react-slot'
+
+function Button({ asChild, ...props }) {
+  const Comp = asChild ? Slot : 'button'
+  return <Comp {...props} />
+}
+```
+
+즉, asChild pattern을 지원하기 위해 만들어진 컴포넌트인데 내부 구현은 어떻게 되어있을까?
+
+- https://github.com/radix-ui/primitives/blob/main/packages/react/slot/src/Slot.tsx
+
+```tsx
+const Slot = React.forwardRef<HTMLElement, SlotProps>((props, forwardedRef) => {
+  const { children, ...slotProps } = props
+
+  // 1. 자식요소 중에 Slottable 컴포넌트가 있는지 확인한다.
+  const childrenArray = React.Children.toArray(children)
+  const slottable = childrenArray.find(isSlottable)
+
+  // 2. 만약 Slottable 컴포넌트가 있으면,
+  if (slottable) {
+    // Slottable 컴포넌트의 자식 요소를 newElement에 할당한다.
+    const newElement = slottable.props.children as React.ReactNode
+
+    // childrenArray를 순회하면서 새로운 자식 요소를 생성한다.
+    // Slottable 컴포넌트를 발견하면 해당 자식 요소를 newElement로 교체한다.
+    const newChildren = childrenArray.map((child) => {
+      if (child === slottable) {
+        // 새 요소가 렌더링되는 요소가 될 것이기 때문에,
+        // 그 요소를 (newElement.props.children) 잡는 데만 관심이 있다.
+        if (React.Children.count(newElement) > 1) return React.Children.only(null)
+        return React.isValidElement(newElement)
+          ? (newElement.props.children as React.ReactNode)
+          : null
+      } else {
+        return child
+      }
+    })
+
+    // 3. Slottable 컴포넌트가 존재하지 않을 경우, 기존의 children을 그대로 렌더링한다.
+    return (
+      <SlotClone {...slotProps} ref={forwardedRef}>
+        {React.isValidElement(newElement)
+          ? React.cloneElement(newElement, undefined, newChildren)
+          : null}
+      </SlotClone>
+    )
+  }
+
+  return (
+    <SlotClone {...slotProps} ref={forwardedRef}>
+      {children}
+    </SlotClone>
+  )
+})
+
+const SlotClone = React.forwardRef<any, SlotCloneProps>((props, forwardedRef) => {
+  const { children, ...slotProps } = props
+
+  // children이 유효한 React 요소인지 확인한다.
+  if (React.isValidElement(children)) {
+    // React.cloneElement을 사용하여 children을 복제한다. 이때, 새로운 속성을 적용하여 반환한다.
+    return React.cloneElement(children, {
+      // mergeProps 함수를 사용하여 slotProps와 children.props를 병합한다.
+      // 이를 통해 Slot 컴포넌트의 속성과 해당 자식 요소의 속성을 함께 적용할 수 있다.
+      ...mergeProps(slotProps, children.props),
+      // 부모 컴포넌트에서 전달된 ref와 함께 동작하도록 한다.
+      // composeRefs 함수를 사용하여 두 개의 ref를 결합한다.
+      ref: forwardedRef ? composeRefs(forwardedRef, (children as any).ref) : (children as any).ref,
+    })
+  }
+
+  // children이 유효한 React 요소가 아니거나, children이 여러 개일 경우에는 null을 반환한다.
+  // 이렇게 함으로써 children이 단일 요소일 때만 처리되도록 한다.
+  return React.Children.count(children) > 1 ? React.Children.only(null) : null
+})
+
+const Slottable = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>
+}
+
+// child가 React 요소인지 확인하고, type이 'Slottable' 컴포넌트인지 확인한다.
+function isSlottable(child: React.ReactNode): child is React.ReactElement {
+  return React.isValidElement(child) && child.type === Slottable
+}
+```
+
+정리해보면,
+
+1. Slot: 주어진 자식 요소의 속성을 병합하고 해당 요소를 렌더링한다. 이 컴포넌트는 SlotClone 컴포넌트를 사용하여 내부적으로 렌더링한다.
+
+2. SlotClone: Slot의 자식 요소를 복제하고 해당 요소에 속성을 병합한 후 렌더링한다.
+
+3. Slottable: Slot 컴포넌트의 자식 요소로 사용되며, Slot이 렌더링할 대상이다.
+
+## ✨ 끝내며
+
+이렇게 as prop pattern으로 시작해서, Radix의 asChild prop pattern까지 살펴보았다. Slot 컴포넌트의 내부 구현을 보면서 props를 병합하는 `mergeProps`나 ref를 결합하는 `composeRefs`같은 헬퍼 함수도 알 수 있었고, `React.isValidElement`, `React.cloneElement`, `React.Children.count`, `React.Children.toArray` 같은 자주 사용하지 않거나 처음 보는 메서드들도 만나게 되어 흥미로웠다.
+
+Slot 컴포넌트 외에도 다른 UI 컴포넌트 내부 구현도 살펴보면서 흥미로운 점이 있으면 다음 포스팅에 이어지지 않을까 싶다. 끝!
