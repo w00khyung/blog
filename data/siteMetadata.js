@@ -9,7 +9,7 @@ const siteMetadata = {
   siteUrl: 'https://wookhyung.vercel.app/',
   siteRepo: 'https://github.com/w00khyung/blog',
   siteLogo: '/static/images/logo.png',
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: '/static/images/og-thumbnail.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'qpflapffhs76@gmail.com',
   github: 'https://github.com/w00khyung',
